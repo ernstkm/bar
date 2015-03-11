@@ -9,36 +9,24 @@
       body{
         background-color:lightgrey;
       }
-
-      .chart1, .chart2{
+      .chart1{
         fill:darkgrey;
         font:10px sans-serif;
         text-anchor: middle;
       }
       h2,h3, p, h4, h5{
         font-family:Helvetica;
-        color:grey;
+        color:white;
         }
       p{
         font-size:10px;
-      }
-      .white{
-        color: white;
-      }
-      .green{
-        color:green;
-      }
-      .yellow{
-        color:yellow;
       }
       .axis path, .axis line{
         fill: none;
         stroke:darkgrey;
         shape-rendering:crispEdges;
       }
-      .bin{
-        width:750px;
-      }
+
       </style>
   </head>
   <body>
@@ -51,28 +39,30 @@
 
       <script type="text/javascript">
 /*START SCRIPT*/
-/*ESTABLISH CANVAS*/
+/*ESTABLISH CANVAS BOUNDS*/
 
       var barPadding = 1;
-      var margin = {top:5, right: 5, bottom:30, left:40};
+      var margin = {top:5, right: 5, bottom:100, left:40};
       var width = 200 - margin.left - margin.right;
-      var height = 200 - margin.top - margin.bottom;
-/*DECLARE SCALES*/
-      var x = d3.scale.ordinal()
-        .rangeRoundBands([0,width]);
+      var height = 400 - margin.top - margin.bottom;
 
-      var y = d3.scale.linear()
+/*DECLARE SCALES*/
+      var xScale = d3.scale.ordinal()
+        .domain(["University A", "University B", "University C", "University D", "University E", "University F"])
+        .rangeRoundBands([0, width]);
+      var yScale = d3.scale.linear()
         .range([height,0]);
+
 /*DECLARE AXIS*/
       var xAxis = d3.svg.axis()
-        .scale(x)
+        .scale(xScale)
         .orient("bottom");
 
       var yAxis = d3.svg.axis()
-        .scale(y)
+        .scale(yScale)
         .orient("left");
 
-/*SCIENCE CHART*/
+/*INIIATE */
       var chart1 = d3.select(".chart1")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -83,23 +73,11 @@
       d3.json("exam1.json", function(error, data){
         console.log(data);
         var senior = [data[3]["University A"], data[3]["University B"], data[3]["University C"], data[3]["University D"], data[3]["University E"]];
-        console.log(senior);
-
-        var x = d3.scale.ordinal()
-    .domain(["data[3].", "B", "C", "D", "E", "F"])
-    .rangeBands([0, width]);
-  /*      var uni = [data[3][1],data[3][1], data[3][1], data [3][1], data[3][1]];
-        console.log(uni);*/
-
-/*        x.domain(data.map(function(d){
-          if d.(this) = number
-          then{return d.(this)}
-          ;}));
-        y.domain([0, d3.max(data, function(d){return d[3];}
-        )]);
-        console.log(d3.max);*/
-
+          console.log(senior);
+        yScale.domain([0, d3.max(senior)]);
         var barWidth = width / (senior.length);
+          console.log(barWidth);
+
 
     /*STARTS CREATING BARS*/
       var bar=  chart1.selectAll("g")
@@ -109,8 +87,8 @@
           .attr("transform", function(d,i){return "translate(" + i * barWidth +",0)";});
 
         bar.append("rect")
-          .attr("y", function(d) { return y(d);})
-          .attr("height", function(d) {return height - y(d);})
+          .attr("y", function(d) { return yScale(d);})
+          .attr("height", function(d) {return height - yScale(d);})
           .attr("width", barWidth -1)
           .attr("class", "senior")
           .attr("fill", "white");
@@ -123,7 +101,7 @@
             .attr("dy", ".75em")
             .attr("fill", "none")
             .text(function(d) {return d.Country;});*/
-/*
+
           chart1.append("g")
             .attr("class", "y axis")
             .call(yAxis);
@@ -137,7 +115,7 @@
             .attr("dx", "-1em")
             .attr("dy", "-1em")
             .attr("fill", "darkgrey")
-            .attr("transform", "rotate(-90)")*/
+            .attr("transform", "rotate(-90)")
       });
 
       </script>
